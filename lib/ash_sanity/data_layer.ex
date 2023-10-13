@@ -40,6 +40,7 @@ defmodule AshSanity.DataLayer do
   def can?(_, :filter), do: true
   def can?(_, {:filter_expr, _}), do: true
   def can?(_, :read), do: true
+  def can?(_, :nested_expressions), do: true
 
   def can?(_, _), do: false
 
