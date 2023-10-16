@@ -41,6 +41,11 @@ defmodule AshSanity.DataLayer do
   def can?(_, {:filter_expr, _}), do: true
   def can?(_, :read), do: true
   def can?(_, :nested_expressions), do: true
+  def can?(_, :sort), do: true
+  def can?(_, :limit), do: true
+  def can?(_, :offset), do: true
+
+  def can?(_, {:sort, _}), do: true
 
   def can?(_, _), do: false
 
@@ -61,19 +66,20 @@ defmodule AshSanity.DataLayer do
     end
   end
 
+  def limit(query, limit, _), do: {:ok, %{query | limit: limit}}
+
   def select(query, select, _resource), do: {:ok, %{query | select: select}}
 
   def sort(query, sort, _resource), do: {:ok, %{query | sort: sort}}
 
-  def run_query(%{filter: filter, api: api} = query, resource, parent \\ nil) do
+  def run_query(query, resource, _parent \\ nil) do
     cms = AshSanity.DataLayer.Info.cms(resource)
     type = AshSanity.DataLayer.Info.type(resource)
 
     query = %{query | type: type}
 
     with documents <- cms.all(query) do
-      {:ok, documents} = cast_documents(documents, resource)
-      Ash.Filter.Runtime.filter_matches(api, documents, filter, parent: parent)
+      cast_documents(documents, resource)
     end
   end
 

@@ -9,7 +9,10 @@ defmodule AshSanity.Test.Post do
   end
 
   actions do
-    defaults [:read]
+    read :read do
+      primary? true
+      pagination offset?: true, required?: false
+    end
   end
 
   attributes do
