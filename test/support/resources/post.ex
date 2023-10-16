@@ -24,5 +24,6 @@ defmodule AshSanity.Test.Post do
     end
 
     attribute :title, :string
+    attribute :_createdAt, :date
   end
 end

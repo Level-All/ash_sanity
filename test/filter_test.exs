@@ -43,6 +43,32 @@ defmodule AshSanity.FilterTest do
 
       assert [] == Post |> Ash.Query.filter(contains(title, "Hello")) |> Api.read!()
     end
+
+    test "applies greater than filter" do
+      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+        expected_query =
+          URI.encode_query(query: ~s(*[_type == "post" && _createdAt > "2016-04-25"]))
+
+        assert expected_query == request.query
+
+        {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
+      end)
+
+      assert [] == Post |> Ash.Query.filter(_createdAt > "2016-04-25") |> Api.read!()
+    end
+
+    test "applies less than filter" do
+      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+        expected_query =
+          URI.encode_query(query: ~s(*[_type == "post" && _createdAt < "2016-04-25"]))
+
+        assert expected_query == request.query
+
+        {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
+      end)
+
+      assert [] == Post |> Ash.Query.filter(_createdAt < "2016-04-25") |> Api.read!()
+    end
   end
 
   describe "with pagination" do

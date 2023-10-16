@@ -17,7 +17,7 @@ defmodule AshSanity.Query do
         ~s( && #{Ash.Query.Ref.name(left)} == "#{right}")
 
       _ ->
-        ""
+        raise "Unsupported expression: #{inspect(expression)}"
     end
   end
 
@@ -30,8 +30,14 @@ defmodule AshSanity.Query do
         %{__operator__?: true, operator: :==, left: left, right: right} when is_binary(right) ->
           acc <> ~s( && #{Ash.Query.Ref.name(left)} == "#{right}")
 
+        %{__operator__?: true, operator: :>, left: left, right: right} ->
+          acc <> ~s( && #{Ash.Query.Ref.name(left)} > "#{right}")
+
+        %{__operator__?: true, operator: :<, left: left, right: right} ->
+          acc <> ~s( && #{Ash.Query.Ref.name(left)} < "#{right}")
+
         _ ->
-          ""
+          raise "Unsupported predicate: #{inspect(predicate)}"
       end
     end)
   end
