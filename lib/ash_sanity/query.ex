@@ -4,6 +4,8 @@ defmodule AshSanity.Query do
   """
   defstruct [:resource, :api, :filter, :type, :sort, :offset, :limit]
 
+  alias AshSanity.Utils
+
   def build(query) do
     ~s(*[_type == "#{query.type}"#{build_filters(query.filter)}]#{build_ordering(query.sort)}#{build_slice(query)})
   end
@@ -25,16 +27,16 @@ defmodule AshSanity.Query do
     Enum.reduce(predicates, "", fn predicate, acc ->
       case predicate do
         %{__function__?: true, name: :contains, arguments: [field, value]} ->
-          ~s( && #{Ash.Query.Ref.name(field)} match "#{value}")
+          acc <> ~s( && #{Utils.camelize(field)} match "#{value}")
 
         %{__operator__?: true, operator: :==, left: left, right: right} when is_binary(right) ->
-          acc <> ~s( && #{Ash.Query.Ref.name(left)} == "#{right}")
+          acc <> ~s( && #{Utils.camelize(left)} == "#{right}")
 
         %{__operator__?: true, operator: :>, left: left, right: right} ->
-          acc <> ~s( && #{Ash.Query.Ref.name(left)} > "#{right}")
+          acc <> ~s( && #{Utils.camelize(left)} > "#{right}")
 
         %{__operator__?: true, operator: :<, left: left, right: right} ->
-          acc <> ~s( && #{Ash.Query.Ref.name(left)} < "#{right}")
+          acc <> ~s( && #{Utils.camelize(left)} < "#{right}")
 
         _ ->
           raise "Unsupported predicate: #{inspect(predicate)}"
@@ -52,7 +54,7 @@ defmodule AshSanity.Query do
     orderings =
       orderings
       |> Enum.map_join(", ", fn {field, direction} ->
-        ~s(#{field} #{Atom.to_string(direction)})
+        ~s(#{Utils.camelize(field)} #{Atom.to_string(direction)})
       end)
 
     ~s( | order(#{orderings}\))

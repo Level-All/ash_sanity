@@ -1,5 +1,10 @@
 defmodule AshSanity.DataLayer do
+  @moduledoc """
+  Implementation of the Ash.DataLayer behaviour for Sanity.
+  """
   @behaviour Ash.DataLayer
+
+  alias AshSanity.Utils
 
   @sanity %Spark.Dsl.Section{
     name: :sanity,
@@ -141,7 +146,11 @@ defmodule AshSanity.DataLayer do
     end
   end
 
+  defp get_attribute(document, %{name: :id}) do
+    Map.get(document, "_id")
+  end
+
   defp get_attribute(document, attribute) do
-    Map.get(document, to_string(attribute.name))
+    Map.get(document, Utils.camelize(attribute))
   end
 end

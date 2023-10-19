@@ -12,10 +12,21 @@ defmodule AshSanity.FilterTest do
   describe "with no filter applied" do
     test "retrieves all data" do
       expect(MockFinch, :request, fn _request, Sanity.Finch, [receive_timeout: 30_000] ->
-        {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
+        {:ok,
+         %Finch.Response{
+           body:
+             ~s({"result": [{"_createdAt":"2023-10-19T21:26:38Z","_updatedAt":"2023-10-19T21:26:38Z","_id":"7d10669d-7e9f-4c8c-a7db-e1ea369e7055","_type":"post","title":"My first post!","body":"Hello world!","contentCode":"ASDF"}]}),
+           headers: [],
+           status: 200
+         }}
       end)
 
-      assert [] == Api.read!(Post)
+      [post | _] = Api.read!(Post)
+
+      assert post.id == "7d10669d-7e9f-4c8c-a7db-e1ea369e7055"
+      assert post.title == "My first post!"
+      assert post.body == "Hello world!"
+      assert post.content_code == "ASDF"
     end
   end
 
@@ -29,7 +40,7 @@ defmodule AshSanity.FilterTest do
         {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
       end)
 
-      assert [] == Post |> Ash.Query.filter(_id == "1234") |> Api.read!()
+      assert [] == Post |> Ash.Query.filter(id == "1234") |> Api.read!()
     end
 
     test "applies contains filter" do
@@ -54,7 +65,7 @@ defmodule AshSanity.FilterTest do
         {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
       end)
 
-      assert [] == Post |> Ash.Query.filter(_createdAt > "2016-04-25") |> Api.read!()
+      assert [] == Post |> Ash.Query.filter(created_at > "2016-04-25") |> Api.read!()
     end
 
     test "applies less than filter" do
@@ -67,7 +78,7 @@ defmodule AshSanity.FilterTest do
         {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
       end)
 
-      assert [] == Post |> Ash.Query.filter(_createdAt < "2016-04-25") |> Api.read!()
+      assert [] == Post |> Ash.Query.filter(created_at < "2016-04-25") |> Api.read!()
     end
   end
 

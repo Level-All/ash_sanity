@@ -16,7 +16,7 @@ defmodule AshSanity.Test.Post do
   end
 
   attributes do
-    attribute :_id, :string do
+    attribute :id, :string do
       writable? false
       default &Ash.UUID.generate/0
       primary_key? true
@@ -24,6 +24,12 @@ defmodule AshSanity.Test.Post do
     end
 
     attribute :title, :string
-    attribute :_createdAt, :date
+
+    attribute :body, :string
+
+    attribute :content_code, :string
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 end
