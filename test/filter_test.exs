@@ -95,4 +95,18 @@ defmodule AshSanity.FilterTest do
       assert %Ash.Page.Offset{results: []} = Post |> Api.read!(page: [limit: 10])
     end
   end
+
+  describe "sorting" do
+    test "sorts results" do
+      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+        expected_query = URI.encode_query(query: ~s(*[_type == "post"] | order(orderRank asc\)))
+
+        assert expected_query == request.query
+
+        {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
+      end)
+
+      assert Post |> Ash.Query.sort([:order_rank]) |> Api.read!()
+    end
+  end
 end

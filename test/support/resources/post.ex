@@ -29,6 +29,8 @@ defmodule AshSanity.Test.Post do
 
     attribute :content_code, :string
 
+    attribute :order_rank, :string
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end

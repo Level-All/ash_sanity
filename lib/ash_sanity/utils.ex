@@ -16,6 +16,8 @@ defmodule AshSanity.Utils do
   def camelize(%Ash.Resource.Attribute{} = field),
     do: field.name |> to_string() |> camelize()
 
+  def camelize(atom) when is_atom(atom), do: atom |> to_string() |> camelize()
+
   def camelize(word) when is_binary(word) do
     beginning_uderscore? = String.starts_with?(word, ["_"])
 
