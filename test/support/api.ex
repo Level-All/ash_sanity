@@ -3,6 +3,7 @@ defmodule AshSanity.Test.Api do
   use Ash.Api
 
   resources do
-    resource(AshSanity.Test.Post)
+    resource AshSanity.Test.Post
+    resource AshSanity.Test.Comment
   end
 end

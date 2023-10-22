@@ -11,7 +11,7 @@ defmodule AshSanity.FilterTest do
 
   describe "with no filter applied" do
     test "retrieves all data" do
-      expect(MockFinch, :request, fn _request, Sanity.Finch, [receive_timeout: 30_000] ->
+      expect(MockFinch, :request, fn _request, Sanity.Finch, _ ->
         {:ok,
          %Finch.Response{
            body:
@@ -32,7 +32,7 @@ defmodule AshSanity.FilterTest do
 
   describe "with filter" do
     test "applies equality filter" do
-      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         expected_query = URI.encode_query(query: ~s(*[_type == "post" && _id == "1234"]))
 
         assert expected_query == request.query
@@ -44,7 +44,7 @@ defmodule AshSanity.FilterTest do
     end
 
     test "applies contains filter" do
-      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         expected_query = URI.encode_query(query: ~s(*[_type == "post" && title match "Hello"]))
 
         assert expected_query == request.query
@@ -56,7 +56,7 @@ defmodule AshSanity.FilterTest do
     end
 
     test "applies greater than filter" do
-      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         expected_query =
           URI.encode_query(query: ~s(*[_type == "post" && _createdAt > "2016-04-25"]))
 
@@ -69,7 +69,7 @@ defmodule AshSanity.FilterTest do
     end
 
     test "applies less than filter" do
-      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         expected_query =
           URI.encode_query(query: ~s(*[_type == "post" && _createdAt < "2016-04-25"]))
 
@@ -84,7 +84,7 @@ defmodule AshSanity.FilterTest do
 
   describe "with pagination" do
     test "paginates first page of results" do
-      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         expected_query = URI.encode_query(query: ~s(*[_type == "post"] | order(_id asc\)[0...10]))
 
         assert expected_query == request.query
@@ -98,7 +98,7 @@ defmodule AshSanity.FilterTest do
 
   describe "sorting" do
     test "sorts results" do
-      expect(MockFinch, :request, fn request, Sanity.Finch, [receive_timeout: 30_000] ->
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         expected_query = URI.encode_query(query: ~s(*[_type == "post"] | order(orderRank asc\)))
 
         assert expected_query == request.query
@@ -107,6 +107,22 @@ defmodule AshSanity.FilterTest do
       end)
 
       assert Post |> Ash.Query.sort([:order_rank]) |> Api.read!()
+    end
+  end
+
+  describe "loading references" do
+    test "loads related documents" do
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
+        expected_query = URI.encode_query(query: ~s(*[_type == "post"]))
+
+        assert expected_query == request.query
+
+        {:ok, %Finch.Response{body: ~s({"result": []}), headers: [], status: 200}}
+      end)
+
+      # I would expect the DataLayer to have something happen as 
+      # a result of Query.load() bing called
+      Post |> Ash.Query.load(:comments) |> Api.read!()
     end
   end
 end

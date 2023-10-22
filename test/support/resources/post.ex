@@ -34,4 +34,8 @@ defmodule AshSanity.Test.Post do
     create_timestamp :created_at
     update_timestamp :updated_at
   end
+
+  relationships do
+    has_many :comments, AshSanity.Test.Comment
+  end
 end

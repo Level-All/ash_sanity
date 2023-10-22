@@ -83,9 +83,9 @@ defmodule AshSanity.DataLayer do
 
     query = %{query | type: type}
 
-    with documents <- cms.all(query) do
-      cast_documents(documents, resource)
-    end
+    query
+    |> cms.all()
+    |> cast_documents(resource)
   end
 
   defp cast_documents(documents, resource) do
