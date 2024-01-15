@@ -27,15 +27,13 @@ defmodule AshSanity.Test.Post do
 
     attribute :body, :string
 
-    attribute :content_code, :string
+    attribute :author, AshSanity.Reference, constraints: [instance_of: AshSanity.Test.User]
 
-    attribute :order_rank, :string
+    attribute :comments,
+              {:array, AshSanity.Reference},
+              constraints: [items: [instance_of: AshSanity.Test.Comment]]
 
     create_timestamp :created_at
     update_timestamp :updated_at
-  end
-
-  relationships do
-    has_many :comments, AshSanity.Test.Comment
   end
 end

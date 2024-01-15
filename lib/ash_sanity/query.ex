@@ -2,12 +2,12 @@ defmodule AshSanity.Query do
   @moduledoc """
   Query helpers for AshSanity
   """
-  defstruct [:resource, :api, :filter, :type, :sort, :offset, :limit]
+  defstruct [:resource, :api, :filter, :type, :sort, :offset, :limit, :select]
 
   alias AshSanity.Utils
 
   def build(query) do
-    ~s(*[_type == "#{query.type}"#{build_filters(query.filter)}]#{build_ordering(query.sort)}#{build_slice(query)})
+    ~s(*[_type == "#{query.type}"#{build_filters(query.filter)}]#{build_ordering(query.sort)}#{build_projections(query.select, query.resource)}#{build_slice(query)})
   end
 
   defp build_filters(%Ash.Filter{expression: expression}) do
@@ -60,10 +60,56 @@ defmodule AshSanity.Query do
     ~s( | order(#{orderings}\))
   end
 
+  defp build_projections(nil, resource) do
+    projections =
+      resource
+      |> Ash.Resource.Info.attributes()
+      |> Enum.map_join(", ", fn attribute ->
+        attribute_to_query_string(attribute)
+      end)
+
+    ~s({#{projections}})
+  end
+
+  defp build_projections(select, resource) do
+    projections =
+      resource
+      |> Ash.Resource.Info.attributes()
+      |> Enum.filter(fn attribute ->
+        attribute.primary_key? || attribute.name in select
+      end)
+      |> Enum.map_join(", ", fn attribute ->
+        attribute_to_query_string(attribute)
+      end)
+
+    ~s({#{projections}})
+  end
+
   defp build_slice(%{offset: nil, limit: nil}), do: ""
   defp build_slice(%{offset: _offset, limit: nil}), do: ""
 
   defp build_slice(%{offset: offset, limit: limit}) do
     ~s([#{offset}...#{limit - 1}])
+  end
+
+  defp attribute_to_query_string(%Ash.Resource.Attribute{
+         name: name,
+         type: AshSanity.Reference,
+         constraints: [instance_of: resource]
+       }) do
+    ~s(#{Utils.camelize(name)}->#{build_projections(nil, resource)})
+  end
+
+  defp attribute_to_query_string(%Ash.Resource.Attribute{
+         name: name,
+         type: {:array, AshSanity.Reference},
+         constraints: constraints
+       }) do
+    [instance_of: resource] = Keyword.get(constraints, :items)
+    ~s(#{Utils.camelize(name)}[]->#{build_projections(nil, resource)})
+  end
+
+  defp attribute_to_query_string(attribute) do
+    Utils.camelize(attribute.name)
   end
 end
