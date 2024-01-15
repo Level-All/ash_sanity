@@ -16,13 +16,13 @@ defmodule AshSanity.Reference do
     ]
   ]
 
-  @impl true
+  @impl Ash.Type
   def constraints, do: @constraints
 
-  @impl true
+  @impl Ash.Type
   def storage_type(_), do: :map
 
-  @impl true
+  @impl Ash.Type
   def cast_input(nil, _), do: {:ok, nil}
 
   def cast_input(%struct{} = value, constraints) do
@@ -40,6 +40,7 @@ defmodule AshSanity.Reference do
 
   def cast_input(_, _), do: :error
 
+  @impl Ash.Type
   def cast_input_array(_list, _constraints) do
     {:ok, []}
   end
@@ -56,19 +57,21 @@ defmodule AshSanity.Reference do
     constraints[:instance_of] && Ash.Resource.Info.resource?(constraints[:instance_of])
   end
 
-  @impl true
+  @impl Ash.Type
   def cast_stored(term, instance_of: resource) do
     DataLayer.cast_document(term, resource)
   end
 
-  def cast_stored_array(list, instance_of: resource) do
-    DataLayer.cast_documents(list, resource)
+  @impl Ash.Type
+  def cast_stored_array(list, constraints) do
+    DataLayer.cast_documents(list, constraints[:items][:instance_of])
   end
 
-  @impl true
+  @impl Ash.Type
   def dump_to_native(nil, _), do: {:ok, nil}
   def dump_to_native(_, _), do: :error
 
+  @impl Ash.Type
   def dump_to_native_array(_list, _constraints) do
     {:ok, []}
   end
