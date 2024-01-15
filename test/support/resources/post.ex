@@ -27,10 +27,10 @@ defmodule AshSanity.Test.Post do
 
     attribute :body, :string
 
-    attribute :author, AshSanity.Reference, constraints: [instance_of: AshSanity.Test.User]
+    attribute :author, AshSanity.Type.Reference, constraints: [instance_of: AshSanity.Test.User]
 
     attribute :comments,
-              {:array, AshSanity.Reference},
+              {:array, AshSanity.Type.Reference},
               constraints: [items: [instance_of: AshSanity.Test.Comment]]
 
     create_timestamp :created_at

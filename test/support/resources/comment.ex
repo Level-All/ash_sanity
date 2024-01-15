@@ -22,6 +22,6 @@ defmodule AshSanity.Test.Comment do
 
     attribute :comment, :string
 
-    attribute :author, AshSanity.Reference, constraints: [instance_of: AshSanity.Test.User]
+    attribute :author, AshSanity.Type.Reference, constraints: [instance_of: AshSanity.Test.User]
   end
 end
