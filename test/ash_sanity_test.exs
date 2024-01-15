@@ -15,6 +15,10 @@ defmodule AshSanityTest do
       _id: UUID.generate(),
       _type: "post",
       title: "My First Post!",
+      slug: %{
+        _type: "slug",
+        current: "my-first-post"
+      },
       body: "Hello World",
       author: %{
         _id: UUID.generate(),
@@ -54,6 +58,7 @@ defmodule AshSanityTest do
 
       assert post.id == ctx.response[:_id]
       assert post.body == ctx.response.body
+      assert post.slug == ctx.response.slug.current
     end
   end
 

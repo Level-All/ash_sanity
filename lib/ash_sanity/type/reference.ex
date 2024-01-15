@@ -63,6 +63,10 @@ defmodule AshSanity.Type.Reference do
   end
 
   @impl Ash.Type
+  def cast_stored_array(list, instance_of: resource) do
+    DataLayer.cast_documents(list, resource)
+  end
+
   def cast_stored_array(list, constraints) do
     DataLayer.cast_documents(list, constraints[:items][:instance_of])
   end

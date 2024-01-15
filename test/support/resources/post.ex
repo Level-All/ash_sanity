@@ -23,6 +23,8 @@ defmodule AshSanity.Test.Post do
       allow_nil? false
     end
 
+    attribute :slug, AshSanity.Type.Slug
+
     attribute :title, :string
 
     attribute :body, :string
