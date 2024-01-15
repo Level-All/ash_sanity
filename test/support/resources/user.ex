@@ -1,15 +1,18 @@
-defmodule AshSanity.Test.Comment do
+defmodule AshSanity.Test.User do
   @moduledoc false
   use Ash.Resource,
     data_layer: AshSanity.DataLayer
 
   sanity do
-    type("comment")
+    type("user")
     cms(AshSanity.TestCMS)
   end
 
   actions do
-    defaults [:read]
+    read :read do
+      primary? true
+      pagination offset?: true, required?: false
+    end
   end
 
   attributes do
@@ -20,8 +23,6 @@ defmodule AshSanity.Test.Comment do
       allow_nil? false
     end
 
-    attribute :comment, :string
-
-    attribute :author, AshSanity.Reference, constraints: [instance_of: AshSanity.Test.User]
+    attribute :full_name, :string
   end
 end

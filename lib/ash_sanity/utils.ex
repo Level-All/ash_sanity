@@ -2,13 +2,9 @@ defmodule AshSanity.Utils do
   @moduledoc """
   Helpers for AshSanity
   """
-  def camelize(:id), do: "_id"
-  def camelize(:created_at), do: "_createdAt"
-  def camelize(:updated_at), do: "_updatedAt"
-
-  def camelize(%{attribute: %{name: :id}}), do: "_id"
-  def camelize(%{attribute: %{name: :created_at}}), do: "_createdAt"
-  def camelize(%{attribute: %{name: :updated_at}}), do: "_updatedAt"
+  def camelize("id"), do: "_id"
+  def camelize("created_at"), do: "_createdAt"
+  def camelize("updated_at"), do: "_updatedAt"
 
   def camelize(%Ash.Query.Ref{} = field),
     do: Ash.Query.Ref.name(field) |> to_string() |> camelize()

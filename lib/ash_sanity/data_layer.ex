@@ -88,7 +88,7 @@ defmodule AshSanity.DataLayer do
     |> cast_documents(resource)
   end
 
-  defp cast_documents(documents, resource) do
+  def cast_documents(documents, resource) do
     documents
     |> Enum.reduce_while({:ok, []}, fn document, {:ok, casted} ->
       case cast_document(document, resource) do
@@ -108,7 +108,7 @@ defmodule AshSanity.DataLayer do
     end
   end
 
-  defp cast_document(document, resource) do
+  def cast_document(document, resource) do
     resource
     |> Ash.Resource.Info.attributes()
     |> Enum.reduce_while({:ok, %{}}, fn attribute, {:ok, attrs} ->
@@ -144,10 +144,6 @@ defmodule AshSanity.DataLayer do
       {:error, error} ->
         {:halt, {:error, error}}
     end
-  end
-
-  defp get_attribute(document, %{name: :id}) do
-    Map.get(document, "_id")
   end
 
   defp get_attribute(document, attribute) do
