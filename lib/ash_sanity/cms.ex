@@ -42,16 +42,12 @@ defmodule AshSanity.CMS do
       end
 
       defp request(query_string) do
-        config = Application.get_env(@otp_app, __MODULE__, [])
+        config =
+          Application.get_env(@otp_app, __MODULE__, [])
+          |> Keyword.put_new(:finch_mod, Finch)
 
         Sanity.query(query_string)
-        |> Sanity.request(
-          project_id: Keyword.get(config, :project_id),
-          dataset: Keyword.get(config, :dataset),
-          token: Keyword.get(config, :token),
-          cdn: Keyword.get(config, :cdn),
-          finch_mod: Keyword.get(config, :finch_mod, Finch)
-        )
+        |> Sanity.request(config)
       end
     end
   end
