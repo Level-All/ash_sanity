@@ -107,7 +107,6 @@ defmodule AshSanity.Query do
        }) do
     [instance_of: resource] = Keyword.get(constraints, :items)
     ~s(#{Utils.camelize(name)}[]->#{build_projections(nil, resource)})
-    # ~s(#{Utils.camelize(name)}[]->#{build_projections(nil, resource)})
   end
 
   defp attribute_to_query_string(attribute) do
