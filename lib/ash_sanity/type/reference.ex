@@ -1,4 +1,4 @@
-defmodule AshSanity.Reference do
+defmodule AshSanity.Type.Reference do
   @moduledoc """
   Represents a struct.
 
