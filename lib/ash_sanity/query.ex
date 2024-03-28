@@ -89,7 +89,7 @@ defmodule AshSanity.Query do
   defp build_slice(%{offset: _offset, limit: nil}), do: ""
 
   defp build_slice(%{offset: offset, limit: limit}) do
-    ~s([#{offset}...#{limit - 1}])
+    ~s([#{offset}...#{offset + limit - 1}])
   end
 
   defp attribute_to_query_string(%Ash.Resource.Attribute{
