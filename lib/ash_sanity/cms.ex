@@ -19,7 +19,8 @@ defmodule AshSanity.CMS do
         project_id: "my_project_id",
         dataset: "production",
         token: "my_sanity_api_token",
-        cdn: true
+        cdn: true,
+        perspective: "published"
 
   """
 
@@ -46,7 +47,9 @@ defmodule AshSanity.CMS do
           Application.get_env(@otp_app, __MODULE__, [])
           |> Keyword.put_new(:finch_mod, Finch)
 
-        Sanity.query(query_string)
+        perspective = Keyword.get(config, :perspective, "published")
+
+        Sanity.query(query_string, %{}, perspective: perspective)
         |> Sanity.request(config)
       end
     end

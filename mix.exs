@@ -8,7 +8,10 @@ defmodule AshSanity.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
-      deps: deps()
+      deps: deps(),
+      description: description(),
+      package: package(),
+      source_url: "https://github.com/sbennett33/ash_sanity"
     ]
   end
 
@@ -30,6 +33,19 @@ defmodule AshSanity.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sanity, "~> 1.3"},
       {:mox, "~> 1.1", only: :test}
+    ]
+  end
+
+  def description do
+    """
+    Ash DataLayer for the Sanity.io CMS
+    """
+  end
+
+  def package() do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/sbennett33/ash_sanity"}
     ]
   end
 end
