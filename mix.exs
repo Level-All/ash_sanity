@@ -32,7 +32,8 @@ defmodule AshSanity.MixProject do
       {:ash, "~> 2.15"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sanity, "~> 1.3"},
-      {:mox, "~> 1.1", only: :test}
+      {:mox, "~> 1.1", only: :test},
+      {:ex_doc, "~> 0.31.2", only: :dev, runtime: false}
     ]
   end
 

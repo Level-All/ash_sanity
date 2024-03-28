@@ -109,16 +109,18 @@ defmodule AshSanityTest do
   end
 
   describe "with pagination" do
-    test "paginates first page of results", ctx do
-      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
+    test "paginates results", ctx do
+      expect(MockFinch, :request, 2, fn request, Sanity.Finch, _ ->
         %{"query" => query} = URI.decode_query(request.query)
         assert query =~ ~s(| order(_id asc\))
-        assert query =~ ~s([0...10])
+        assert query =~ ~s([0...10]) || query =~ ~s([10...20])
 
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
 
-      assert %Ash.Page.Offset{results: [_]} = Post |> Api.read!(page: [limit: 10])
+      assert page = %Ash.Page.Offset{results: [_]} = Post |> Api.read!(page: [limit: 10])
+
+      Api.page(page, :next)
     end
   end
 
