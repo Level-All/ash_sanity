@@ -49,6 +49,8 @@ defmodule AshSanity.CMS do
 
         perspective = Keyword.get(config, :perspective, "published")
 
+        config = Keyword.delete(config, :perspective)
+
         Sanity.query(query_string, %{}, perspective: perspective)
         |> Sanity.request(config)
       end

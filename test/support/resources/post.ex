@@ -31,6 +31,8 @@ defmodule AshSanity.Test.Post do
 
     attribute :author, AshSanity.Type.Reference, constraints: [instance_of: AshSanity.Test.User]
 
+    attribute :image, AshSanity.Type.Object, constraints: [instance_of: AshSanity.Test.Image]
+
     attribute :comments,
               {:array, AshSanity.Type.Reference},
               constraints: [items: [instance_of: AshSanity.Test.Comment]]

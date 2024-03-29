@@ -97,7 +97,9 @@ defmodule AshSanity.Query do
          type: AshSanity.Type.Reference,
          constraints: [instance_of: resource]
        }) do
-    ~s(#{Utils.camelize(name)}->#{build_projections(nil, resource)})
+    name = Utils.camelize(name)
+
+    ~s("#{name}": #{name}->#{build_projections(nil, resource)})
   end
 
   defp attribute_to_query_string(%Ash.Resource.Attribute{
@@ -106,7 +108,19 @@ defmodule AshSanity.Query do
          constraints: constraints
        }) do
     [instance_of: resource] = Keyword.get(constraints, :items)
-    ~s(#{Utils.camelize(name)}[]->#{build_projections(nil, resource)})
+    name = Utils.camelize(name)
+
+    ~s("#{name}": #{name}[]->#{build_projections(nil, resource)})
+  end
+
+  defp attribute_to_query_string(%Ash.Resource.Attribute{
+         name: name,
+         type: AshSanity.Type.Object,
+         constraints: [instance_of: resource]
+       }) do
+    name = Utils.camelize(name)
+
+    ~s("#{name}": #{name} #{build_projections(nil, resource)})
   end
 
   defp attribute_to_query_string(attribute) do

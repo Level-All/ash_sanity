@@ -6,5 +6,6 @@ defmodule AshSanity.Test.Api do
     resource AshSanity.Test.Post
     resource AshSanity.Test.Comment
     resource AshSanity.Test.User
+    resource AshSanity.Test.Image
   end
 end

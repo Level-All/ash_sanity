@@ -1,9 +1,9 @@
-defmodule AshSanity.Type.Reference do
+defmodule AshSanity.Type.Object do
   @moduledoc """
-  Represents a reference to another Sanity document.
+  Represents an attribute that is a complex object in Sanity.
 
   Use the `instance_of` constraint to specify that it must 
-  be an instance of a specific document type.
+  be an instance of a specific resource type.
   """
   alias AshSanity.DataLayer
   use Ash.Type
@@ -40,11 +40,6 @@ defmodule AshSanity.Type.Reference do
   def cast_input(_, _), do: :error
 
   @impl Ash.Type
-  def cast_input_array(_list, _constraints) do
-    {:ok, []}
-  end
-
-  @impl Ash.Type
   def load(record, load, _constraints, %{api: api} = context) do
     opts = context |> Map.take([:actor, :authorize?, :tenant, :tracer]) |> Map.to_list()
 
@@ -64,10 +59,6 @@ defmodule AshSanity.Type.Reference do
   @impl Ash.Type
   def cast_stored_array(list, instance_of: resource) do
     DataLayer.cast_documents(list, resource)
-  end
-
-  def cast_stored_array(list, constraints) do
-    DataLayer.cast_documents(list, constraints[:items][:instance_of])
   end
 
   @impl Ash.Type

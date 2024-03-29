@@ -24,6 +24,13 @@ defmodule AshSanityTest do
         _id: UUID.generate(),
         fullName: "John Doe"
       },
+      image: %{
+        title: "My Image",
+        author: %{
+          _id: UUID.generate(),
+          fullName: "John Doe"
+        }
+      },
       comments: [
         %{
           _id: UUID.generate(),
@@ -110,10 +117,20 @@ defmodule AshSanityTest do
 
   describe "with pagination" do
     test "paginates results", ctx do
-      expect(MockFinch, :request, 2, fn request, Sanity.Finch, _ ->
-        %{"query" => query} = URI.decode_query(request.query)
+      MockFinch
+      |> expect(:request, 1, fn %{query: query}, Sanity.Finch, _ ->
+        %{"query" => query} = URI.decode_query(query)
+
         assert query =~ ~s(| order(_id asc\))
-        assert query =~ ~s([0...10]) || query =~ ~s([10...20])
+        assert query =~ ~s([0...10])
+
+        {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
+      end)
+      |> expect(:request, 1, fn %{query: query}, Sanity.Finch, _ ->
+        %{"query" => query} = URI.decode_query(query)
+
+        assert query =~ ~s(| order(_id asc\))
+        assert query =~ ~s([10...20])
 
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
