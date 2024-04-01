@@ -31,6 +31,12 @@ defmodule AshSanityTest do
           fullName: "John Doe"
         }
       },
+      filters: [
+        %{
+          _type: "identityFilter",
+          identityType: "educators"
+        }
+      ],
       comments: [
         %{
           _id: UUID.generate(),
@@ -66,6 +72,8 @@ defmodule AshSanityTest do
       assert post.id == ctx.response[:_id]
       assert post.body == ctx.response.body
       assert post.slug == ctx.response.slug.current
+
+      assert length(post.filters) == 1
     end
   end
 
