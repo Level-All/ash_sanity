@@ -29,7 +29,7 @@ defmodule AshSanity.MixProject do
 
   defp deps do
     [
-      {:ash, "~> 2.15"},
+      {:ash, "~> 3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sanity, "~> 1.3"},
       {:mox, "~> 1.1", only: :test},
