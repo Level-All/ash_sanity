@@ -1,7 +1,8 @@
 defmodule AshSanity.Test.Post do
   @moduledoc false
   use Ash.Resource,
-    data_layer: AshSanity.DataLayer
+    data_layer: AshSanity.DataLayer,
+    domain: AshSanity.Test.Domain
 
   sanity do
     type("post")
@@ -28,6 +29,8 @@ defmodule AshSanity.Test.Post do
     attribute(:title, :string)
 
     attribute(:body, :string)
+
+    attribute(:status, :atom, constraints: [one_of: [:DRAFT, :IS_PUBLISHED]])
 
     attribute(:author, AshSanity.Type.Reference, constraints: [instance_of: AshSanity.Test.User])
 

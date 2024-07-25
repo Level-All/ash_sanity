@@ -1,7 +1,8 @@
 defmodule AshSanity.Test.IdentityFilter do
   @moduledoc false
   use Ash.Resource,
-    data_layer: AshSanity.DataLayer
+    data_layer: AshSanity.DataLayer,
+    domain: AshSanity.Test.Domain
 
   sanity do
     type("identityFilter")

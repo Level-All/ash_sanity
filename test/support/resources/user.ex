@@ -1,7 +1,8 @@
 defmodule AshSanity.Test.User do
   @moduledoc false
   use Ash.Resource,
-    data_layer: AshSanity.DataLayer
+    data_layer: AshSanity.DataLayer,
+    domain: AshSanity.Test.Domain
 
   sanity do
     type("user")
@@ -10,19 +11,19 @@ defmodule AshSanity.Test.User do
 
   actions do
     read :read do
-      primary? true
-      pagination offset?: true, required?: false
+      primary?(true)
+      pagination(offset?: true, required?: false)
     end
   end
 
   attributes do
     attribute :id, :string do
-      writable? false
-      default &Ash.UUID.generate/0
-      primary_key? true
-      allow_nil? false
+      writable?(false)
+      default(&Ash.UUID.generate/0)
+      primary_key?(true)
+      allow_nil?(false)
     end
 
-    attribute :full_name, :string
+    attribute(:full_name, :string)
   end
 end

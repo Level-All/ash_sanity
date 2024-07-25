@@ -1,7 +1,7 @@
 import Config
 
 if Config.config_env() == :test do
-  config :ash_sanity, ash_apis: [AshSanity.Test.Api]
+  config :ash_sanity, ash_domains: [AshSanity.Test.Domain]
 
   config :ash_sanity, AshSanity.TestCMS,
     project_id: "abc",

@@ -2,7 +2,7 @@ defmodule AshSanityTest do
   use AshSanity.CMSCase
 
   alias AshSanity.MockFinch
-  alias AshSanity.Test.{Api, Post}
+  alias AshSanity.Test. Post
   alias Ecto.UUID
 
   require Ash.Query
@@ -20,6 +20,7 @@ defmodule AshSanityTest do
         current: "my-first-post"
       },
       body: "Hello World",
+      status: "IS_PUBLISHED",
       author: %{
         _id: UUID.generate(),
         fullName: "John Doe"
@@ -67,7 +68,7 @@ defmodule AshSanityTest do
          }}
       end)
 
-      [post | _] = Api.read!(Post)
+      [post | _] = Ash.read!(Post)
 
       assert post.id == ctx.response[:_id]
       assert post.body == ctx.response.body
@@ -78,7 +79,7 @@ defmodule AshSanityTest do
   end
 
   describe "with filter" do
-    test "applies equality filter", ctx do
+    test "applies equality filter for strings", ctx do
       expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         %{"query" => query} = URI.decode_query(request.query)
         assert query =~ ~s(_id == "1234")
@@ -86,7 +87,18 @@ defmodule AshSanityTest do
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
 
-      Post |> Ash.Query.filter(id == "1234") |> Api.read!()
+      Post |> Ash.Query.filter(id == "1234") |> Ash.read!()
+    end
+
+    test "applies equality filter for atoms", ctx do
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
+        %{"query" => query} = URI.decode_query(request.query)
+        assert query =~ ~s(status == "IS_PUBLISHED")
+
+        {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
+      end)
+
+      Post |> Ash.Query.filter(status == :IS_PUBLISHED) |> Ash.read!()
     end
 
     test "applies contains filter", ctx do
@@ -97,7 +109,7 @@ defmodule AshSanityTest do
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
 
-      Post |> Ash.Query.filter(contains(title, "Hello")) |> Api.read!()
+      Post |> Ash.Query.filter(contains(title, "Hello")) |> Ash.read!()
     end
 
     test "applies greater than filter", ctx do
@@ -108,7 +120,7 @@ defmodule AshSanityTest do
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
 
-      Post |> Ash.Query.filter(created_at > "2016-04-25") |> Api.read!()
+      Post |> Ash.Query.filter(created_at > "2016-04-25") |> Ash.read!()
     end
 
     test "applies less than filter", ctx do
@@ -119,7 +131,7 @@ defmodule AshSanityTest do
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
 
-      Post |> Ash.Query.filter(created_at < "2016-04-25") |> Api.read!()
+      Post |> Ash.Query.filter(created_at < "2016-04-25") |> Ash.read!()
     end
   end
 
@@ -143,9 +155,9 @@ defmodule AshSanityTest do
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
 
-      assert page = %Ash.Page.Offset{results: [_]} = Post |> Api.read!(page: [limit: 10])
+      assert page = %Ash.Page.Offset{results: [_]} = Post |> Ash.read!(page: [limit: 10])
 
-      Api.page(page, :next)
+      Ash.page(page, :next)
     end
   end
 
@@ -158,7 +170,7 @@ defmodule AshSanityTest do
         {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
       end)
 
-      assert Post |> Ash.Query.sort([:created_at]) |> Api.read!()
+      assert Post |> Ash.Query.sort([:created_at]) |> Ash.read!()
     end
   end
 
@@ -176,7 +188,7 @@ defmodule AshSanityTest do
          }}
       end)
 
-      [post | _] = Post |> Api.read!()
+      [post | _] = Post |> Ash.read!()
 
       assert post.author.full_name == ctx.response.author.fullName
     end
@@ -194,7 +206,7 @@ defmodule AshSanityTest do
          }}
       end)
 
-      [post | _] = Post |> Api.read!()
+      [post | _] = Post |> Ash.read!()
 
       [first_comment | _] = post.comments
 

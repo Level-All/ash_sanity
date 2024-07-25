@@ -1,6 +1,6 @@
-defmodule AshSanity.Test.Api do
+defmodule AshSanity.Test.Domain do
   @moduledoc false
-  use Ash.Api
+  use Ash.Domain
 
   resources do
     resource(AshSanity.Test.Post)

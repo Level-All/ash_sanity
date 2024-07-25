@@ -16,7 +16,7 @@ defmodule AshSanity.QueryTest do
       }
 
       assert Query.build(query) ==
-               ~s(*[_type == "post"]{_id, slug, title, body, "author": author->{_id, fullName}, "image": image {title, "author": author->{_id, fullName}}, "comments": comments[]->{_id, comment, "author": author->{_id, fullName}}, _createdAt, _updatedAt})
+               ~s(*[_type == "post"]{_id, slug, title, body, status, "author": author->{_id, fullName}, "image": image {title, "author": author->{_id, fullName}}, filters, "comments": comments[]->{_id, comment, "author": author->{_id, fullName}}, _createdAt, _updatedAt})
     end
 
     test "select specific fields" do
@@ -46,7 +46,7 @@ defmodule AshSanity.QueryTest do
       }
 
       assert Query.build(query) ==
-               ~s(*[_type == "post" && _id == "1234"]{_id, slug, title, body, "author": author->{_id, fullName}, "image": image {title, "author": author->{_id, fullName}}, "comments": comments[]->{_id, comment, "author": author->{_id, fullName}}, _createdAt, _updatedAt})
+               ~s(*[_type == "post" && _id == "1234"]{_id, slug, title, body, status, "author": author->{_id, fullName}, "image": image {title, "author": author->{_id, fullName}}, filters, "comments": comments[]->{_id, comment, "author": author->{_id, fullName}}, _createdAt, _updatedAt})
     end
   end
 end

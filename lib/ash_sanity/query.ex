@@ -32,6 +32,10 @@ defmodule AshSanity.Query do
         %{__operator__?: true, operator: :==, left: left, right: right} when is_binary(right) ->
           acc <> ~s( && #{Utils.camelize(left)} == "#{right}")
 
+        %{__operator__?: true, operator: :==, left: left, right: right} when is_atom(right) ->
+          acc <>
+            ~s( && #{Utils.camelize(left)} == "#{to_string(right)}")
+
         %{__operator__?: true, operator: :>, left: left, right: right} ->
           acc <> ~s( && #{Utils.camelize(left)} > "#{right}")
 
