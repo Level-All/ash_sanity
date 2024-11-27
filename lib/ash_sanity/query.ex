@@ -42,6 +42,9 @@ defmodule AshSanity.Query do
         %{__operator__?: true, operator: :<, left: left, right: right} ->
           acc <> ~s( && #{Utils.camelize(left)} < "#{right}")
 
+        %{__operator__?: true, operator: :in, left: left, right: right} ->
+          acc <> ~s( && #{Utils.camelize(left)} in #{inspect(MapSet.to_list(right))})
+
         _ ->
           raise "Unsupported predicate: #{inspect(predicate)}"
       end

@@ -2,7 +2,7 @@ defmodule AshSanityTest do
   use AshSanity.CMSCase
 
   alias AshSanity.MockFinch
-  alias AshSanity.Test. Post
+  alias AshSanity.Test.Post
   alias Ecto.UUID
 
   require Ash.Query
@@ -132,6 +132,17 @@ defmodule AshSanityTest do
       end)
 
       Post |> Ash.Query.filter(created_at < "2016-04-25") |> Ash.read!()
+    end
+
+    test "applies in filter", ctx do
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
+        %{"query" => query} = URI.decode_query(request.query)
+        assert query =~ ~s(id in ["1234", "2345"])
+
+        {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
+      end)
+
+      Post |> Ash.Query.filter(id in ["1234", "2345"]) |> Ash.read!()
     end
   end
 
