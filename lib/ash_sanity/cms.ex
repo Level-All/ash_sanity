@@ -31,6 +31,8 @@ defmodule AshSanity.CMS do
     quote bind_quoted: [opts: opts] do
       alias AshSanity.Query
 
+      require Logger
+
       otp_app = opts[:otp_app] || raise("Must configure OTP app")
       @otp_app otp_app
 
@@ -38,6 +40,8 @@ defmodule AshSanity.CMS do
         query_string = Query.build(query)
 
         {:ok, response} = request(query_string)
+
+        Logger.debug("QUERY OK #{query_string}")
 
         response.body["result"]
       end
