@@ -7,7 +7,7 @@ defmodule AshSanity.Query do
   alias AshSanity.Utils
 
   def build(query) do
-    ~s(*[_type == "#{query.type}"#{build_filters(query.filter)}]#{build_ordering(query.sort)}#{build_projections(query.select, query.resource)}#{build_slice(query)})
+    ~s(*[_type == "#{Utils.camelize(query.type)}"#{build_filters(query.filter)}]#{build_ordering(query.sort)}#{build_projections(query.select, query.resource)}#{build_slice(query)})
   end
 
   defp build_filters(%Ash.Filter{expression: expression}) do
