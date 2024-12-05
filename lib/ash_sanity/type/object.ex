@@ -44,10 +44,10 @@ defmodule AshSanity.Type.Object do
   def cast_input(_, _), do: :error
 
   @impl Ash.Type
-  def load(record, load, _constraints, %{domain: domain} = context) do
+  def load(record, load, _constraints, context) do
     opts = context |> Map.take([:actor, :authorize?, :tenant, :tracer]) |> Map.to_list()
 
-    domain.load(record, load, opts)
+    Ash.load(record, load, opts)
   end
 
   @impl Ash.Type

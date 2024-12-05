@@ -90,6 +90,17 @@ defmodule AshSanityTest do
       Post |> Ash.Query.filter(id == "1234") |> Ash.read!()
     end
 
+    test "performs get properly", ctx do
+      expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
+        %{"query" => query} = URI.decode_query(request.query)
+        assert query =~ ~s(_id == "1234")
+
+        {:ok, %Finch.Response{body: ctx.response_body, headers: [], status: 200}}
+      end)
+
+      Ash.get(Post, "1234")
+    end
+
     test "applies equality filter for atoms", ctx do
       expect(MockFinch, :request, fn request, Sanity.Finch, _ ->
         %{"query" => query} = URI.decode_query(request.query)

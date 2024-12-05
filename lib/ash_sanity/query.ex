@@ -36,8 +36,14 @@ defmodule AshSanity.Query do
           acc <>
             ~s( && #{Utils.camelize(left)} == "#{to_string(right)}")
 
+        %{__operator__?: true, operator: :>, left: left, right: %DateTime{} = right} ->
+          acc <> ~s( && #{Utils.camelize(left)} > "#{DateTime.to_date(right)}")
+
         %{__operator__?: true, operator: :>, left: left, right: right} ->
           acc <> ~s( && #{Utils.camelize(left)} > "#{right}")
+
+        %{__operator__?: true, operator: :<, left: left, right: %DateTime{} = right} ->
+          acc <> ~s( && #{Utils.camelize(left)} < "#{DateTime.to_date(right)}")
 
         %{__operator__?: true, operator: :<, left: left, right: right} ->
           acc <> ~s( && #{Utils.camelize(left)} < "#{right}")

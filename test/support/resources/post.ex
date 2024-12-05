@@ -9,6 +9,10 @@ defmodule AshSanity.Test.Post do
     cms(AshSanity.TestCMS)
   end
 
+  code_interface do
+    define(:read)
+  end
+
   actions do
     read :read do
       primary?(true)
