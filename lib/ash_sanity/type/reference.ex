@@ -45,8 +45,8 @@ defmodule AshSanity.Type.Reference do
   end
 
   @impl Ash.Type
-  def load(record, load, _constraints, context) do
-    opts = context |> Map.take([:actor, :authorize?, :tenant, :tracer]) |> Map.to_list()
+  def load(record, load, _constraints, %{domain: domain} = context) do
+    opts = Ash.Context.to_opts(context, domain: domain)
 
     Ash.load(record, load, opts)
   end
