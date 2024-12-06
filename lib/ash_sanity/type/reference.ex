@@ -5,7 +5,10 @@ defmodule AshSanity.Type.Reference do
   Use the `instance_of` constraint to specify that it must 
   be an instance of a specific document type.
   """
+  alias Ash.Actions.Read.Calculations
+  alias Ash.Resource.Info
   alias AshSanity.DataLayer
+
   use Ash.Type
 
   @constraints [
@@ -73,9 +76,9 @@ defmodule AshSanity.Type.Reference do
   def get_rewrites(merged_load, calculation, path, constraints) do
     instance_of = constraints[:instance_of]
 
-    if instance_of && Ash.Resource.Info.resource?(instance_of) do
+    if instance_of && Info.resource?(instance_of) do
       merged_load = Ash.Query.load(instance_of, merged_load)
-      Ash.Actions.Read.Calculations.get_all_rewrites(merged_load, calculation, path)
+      Calculations.get_all_rewrites(merged_load, calculation, path)
     else
       []
     end
@@ -83,12 +86,14 @@ defmodule AshSanity.Type.Reference do
 
   @impl Ash.Type
   def rewrite(value, rewrites, _constraints) do
-    Ash.Actions.Read.Calculations.rewrite(rewrites, value)
+    Calculations.rewrite(rewrites, value)
   end
 
   @impl Ash.Type
   def can_load?(constraints) do
-    constraints[:instance_of] && Ash.Resource.Info.resource?(constraints[:instance_of])
+    instance_of = constraints[:instance_of]
+
+    instance_of && Info.resource?(instance_of)
   end
 
   @impl Ash.Type
